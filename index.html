@@ -102,8 +102,8 @@
                             window.location.href = item.link; // Redirect to item link
                         } else if (item.type === 'web') {
                             window.location.href = item.link; // Redirect to item link
-                        } else if (item.type === 'x') {
-                            window.location.href = `/videoplay.html?link=${encodeURIComponent(item.link)}`; // Redirect to videoplay.html
+                        } else if (item.type === 'iframe') {
+                            window.location.href = `https://zindown.github.io/Web/iframe.html?url=${encodeURIComponent(item.link)}`; // Redirect to videoplay.html
                         } else {
                             window.location.href = `https://zindown.github.io/Web/directplay.html?url=${encodeURIComponent(item.link)}`; // Redirect to videoplay.html
                         }
