@@ -1,161 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>All Kar</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Kar</title>
+    <style>
+        body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
 
-<style>
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  background: #f4f4f4;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
+    .container {
+      flex: 1; /* Take up remaining space below header */
+      padding: 10px;
+      width: 100%;
+      max-width: 1200px;
+      box-sizing: border-box;
+      overflow-y: auto; /* Enable scrolling for content overflow */
+    }
 
-.container {
-  flex: 1;
-  padding: 10px;
-  max-width: 1200px;
-  margin: auto;
-}
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+    }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 10px;
-}
+    .grid-item {
+      background-color: white;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+    }
 
-.grid-item {
-  background: #fff;
-  padding: 10px;
-  border-radius: 8px;
-  text-align: center;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  cursor: pointer;
-}
+    .grid-item img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
 
-.grid-item img {
-  width: 100%;
-  height: 120px;
-  object-fit: cover;
-  border-radius: 4px;
-}
+    .grid-item p {
+      margin: 5px 0 0;
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
-.grid-item p {
-  font-size: 14px;
-  margin: 5px 0 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+    /* Responsive Design for Android phones */
+    @media screen and (max-width: 600px) {
+      .grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 5px;
+      }
 
-/* Video Player Overlay */
-#videoOverlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.9);
-  z-index: 9999;
-  align-items: center;
-  justify-content: center;
-}
+      .grid-item img {
+        height: 100px;
+      }
 
-#videoOverlay video {
-  width: 95%;
-  max-height: 85%;
-  background: black;
-}
-
-/* Mobile */
-@media (max-width:600px) {
-  .grid {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 5px;
-  }
-  .grid-item img {
-    height: 100px;
-  }
-}
-</style>
+      .container {
+        padding: 5px;
+      }
+    }
+    </style>
 </head>
-
 <body>
+    <div class="container">
 
-<div class="container">
-  <div id="gridView" class="grid"></div>
-</div>
+        <div id="gridView" class="grid"></div>
+    </div>
 
-<!-- Video Player -->
-<div id="videoOverlay">
-  <video id="videoPlayer" controls autoplay></video>
-</div>
+    <script>
+        // Extract the link parameter from the URL
+        const params = new URLSearchParams(window.location.search);
+        const link = params.get('link');
 
-<script>
-const params = new URLSearchParams(window.location.search);
-const link = params.get('link');
-
-if (!link) {
-  document.body.innerHTML = '<p style="text-align:center">Error: No link provided</p>';
-} else {
-
-  fetch(link)
-    .then(res => res.json())
-    .then(data => {
-      const gridView = document.getElementById('gridView');
-
-      data.apyar.forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'grid-item';
-
-        div.innerHTML = `
-          <img src="${item.image}" alt="">
-          <p>${item.title}</p>
-        `;
-
-        div.onclick = () => {
-          if (item.type === 'join' || item.type === 'web') {
-            window.location.href = item.link;
-          } 
-          else if (item.type === 'x') {
-            window.location.href = `/videoplay.html?link=${encodeURIComponent(item.link)}`;
-          } 
-          else {
-            // UNKNOWN TYPE → PLAY MP4 HERE
-            playVideo(item.link);
-          }
-        };
-
-        gridView.appendChild(div);
-      });
-    })
-    .catch(err => {
-      console.error(err);
-      document.body.innerHTML = '<p style="text-align:center">Failed to load data</p>';
-    });
-}
-
-// ===== Video Player Function =====
-function playVideo(url) {
-  const overlay = document.getElementById('videoOverlay');
-  const video = document.getElementById('videoPlayer');
-
-  video.src = url;   // MP4 link
-  video.load();
-  video.play();
-
-  overlay.style.display = 'flex';
-
-  // tap anywhere to close
-  overlay.onclick = () => {
-    video.pause();
-    video.src = '';
-    overlay.style.display = 'none';
-  };
-}
-</script>
-
+        if (!link) {
+            document.body.innerHTML = '<p>Error: No link parameter provided!</p>';
+        } else {
+            // Fetch JSON data from the provided link and display grid view
+            fetch(link)
+                .then(response => response.json())
+                .then(data => {
+                    const gridView = document.getElementById('gridView');
+                    data.apyar.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'grid-item';
+                        div.innerHTML = `
+                            <img src="${item.image}" alt="${item.title}">
+                            <p>${item.title}</p>
+                        `;
+                        div.addEventListener('click', () => {
+                        if (item.type === 'join') {
+                            window.location.href = item.link; // Redirect to item link
+                        } else if (item.type === 'web') {
+                            window.location.href = item.link; // Redirect to item link
+                        } else if (item.type === 'x') {
+                            window.location.href = `/videoplay.html?link=${encodeURIComponent(item.link)}`; // Redirect to videoplay.html
+                        } else {
+                            window.location.href = `https://zindown.github.io/Web/directplay.html?url=${encodeURIComponent(item.link)}`; // Redirect to videoplay.html
+                        }
+                    });
+                        gridView.appendChild(div);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching JSON:', error);
+                    document.body.innerHTML = '<p>Error fetching data. Please try again later.</p>';
+                });
+        }
+    </script>
 </body>
 </html>
