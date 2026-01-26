@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Fullscreen Player</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        /* Video သို့မဟုတ် Iframe ကို Screen အပြည့်ထားခြင်း */
+        #videoPlayer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+    <video id="videoPlayer" controls autoplay>
+        <source id="videoSource" src="" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <script>
+        // လက်ရှိ URL ကနေ 'url' ဆိုတဲ့ parameter ကို ရှာဖွေဖတ်ယူခြင်း
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const videoUrl = urlParams.get('url');
+
+        // အကယ်၍ URL မှာ video link ပါလာခဲ့ရင် source ထဲကို ထည့်ပေးခြင်း
+        if (videoUrl) {
+            document.getElementById('videoSource').src = videoUrl;
+            document.getElementById('videoPlayer').load();
+        } else {
+            // Link မပါလာခဲ့ရင် နမူနာပြသရန် (သို့မဟုတ် Error ပြရန်)
+            document.getElementById('videoSource').src = "https://drkogyi.vip/wp-content/uploads/2026/01/26jan241.mp4";
+            document.getElementById('videoPlayer').load();
+        }
+    </script>
+
+</body>
+</html>
