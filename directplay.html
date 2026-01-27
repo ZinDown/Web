@@ -1,10 +1,9 @@
-<!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Fullscreen Player</title>
-    <style>
+ <head> 
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <title>Dynamic Fullscreen Player</title> 
+  <style>
         body, html {
             margin: 0;
             padding: 0;
@@ -14,7 +13,6 @@
             background-color: #000;
         }
 
-        /* Video သို့မဟုတ် Iframe ကို Screen အပြည့်ထားခြင်း */
         #videoPlayer {
             position: absolute;
             top: 0;
@@ -22,32 +20,41 @@
             width: 100%;
             height: 100%;
             border: none;
+            object-fit: contain; 
         }
-    </style>
-</head>
-<body>
-
-    <video id="videoPlayer" controls autoplay>
-        <source id="videoSource" src="" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-
-    <script>
-        // လက်ရှိ URL ကနေ 'url' ဆိုတဲ့ parameter ကို ရှာဖွေဖတ်ယူခြင်း
-        const queryString = window.location.search;
-        const urlParams = new URLSearchParams(queryString);
+    </style> 
+ </head> 
+ <body> 
+  <video id="videoPlayer" controls="" autoplay="" preload="auto" poster="${encodeURIComponent(img)"> 
+   <source id="videoSource" src="${encodeURIComponent(link)}" type="video/mp4"> Your browser does not support the video tag. 
+  </video> 
+  <script>
+   
+        const urlParams = new URLSearchParams(window.location.search);
         const videoUrl = urlParams.get('url');
+        const posterUrl = urlParams.get('img'); // 'img' parameter ကို ဖတ်ယူခြင်း
 
-        // အကယ်၍ URL မှာ video link ပါလာခဲ့ရင် source ထဲကို ထည့်ပေးခြင်း
+        const player = document.getElementById('videoPlayer');
+        const source = document.getElementById('videoSource');
+
+        // Video URL အတွက် စစ်ဆေးခြင်း
         if (videoUrl) {
-            document.getElementById('videoSource').src = videoUrl;
-            document.getElementById('videoPlayer').load();
+            source.src = videoUrl;
         } else {
-            // Link မပါလာခဲ့ရင် နမူနာပြသရန် (သို့မဟုတ် Error ပြရန်)
-            document.getElementById('videoSource').src = "https://drkogyi.vip/wp-content/uploads/2026/01/26jan241.mp4";
-            document.getElementById('videoPlayer').load();
+            // Default Video (အကယ်၍ Parameter မပါခဲ့ရင်)
+            source.src = "https://drkogyi.vip/wp-content/uploads/2026/01/26jan241.mp4";
         }
-    </script>
 
-</body>
+        // Poster Image အတွက် စစ်ဆေးခြင်း
+        if (posterUrl) {
+            player.poster = posterUrl;
+        } else {
+            // Default Poster (အကယ်၍ Parameter မပါခဲ့ရင်)
+            player.poster = "https://drkogyi.vip/wp-content/uploads/2025/03/2521mar6.png";
+        }
+
+        // Player ကို Reload လုပ်ပေးခြင်း
+        player.load();
+    </script> 
+ </body>
 </html>

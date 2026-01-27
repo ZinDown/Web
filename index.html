@@ -105,7 +105,7 @@
                         } else if (item.type === 'iframe') {
                             window.location.href = `https://zindown.github.io/Web/iframe.html?url=${encodeURIComponent(item.link)}`; // Redirect to videoplay.html
                         } else {
-                            window.location.href = `https://zindown.github.io/Web/directplay.html?url=${encodeURIComponent(item.link)}`; // Redirect to videoplay.html
+                            window.location.href = `https://zindown.github.io/Web/directplay.html?url=${encodeURIComponent(item.link)}&img=${encodeURIComponent(item.image)}`; // Redirect to videoplay.html
                         }
                     });
                         gridView.appendChild(div);
