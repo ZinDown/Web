@@ -37,23 +37,23 @@
         const player = document.getElementById('videoPlayer');
         const source = document.getElementById('videoSource');
 
-        // Video URL အတွက် စစ်ဆေးခြင်း
+   
         if (videoUrl) {
             source.src = videoUrl;
         } else {
-            // Default Video (အကယ်၍ Parameter မပါခဲ့ရင်)
+       
             source.src = "https://drkogyi.vip/wp-content/uploads/2026/01/26jan241.mp4";
         }
 
-        // Poster Image အတွက် စစ်ဆေးခြင်း
+
         if (posterUrl) {
             player.poster = posterUrl;
         } else {
-            // Default Poster (အကယ်၍ Parameter မပါခဲ့ရင်)
+        
             player.poster = "https://drkogyi.vip/wp-content/uploads/2025/03/2521mar6.png";
         }
 
-        // Player ကို Reload လုပ်ပေးခြင်း
+
         player.load();
     </script> 
  </body>
