@@ -3,18 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Max Speed Buffer Player</title>
+    <title>High Speed Stream Player</title>
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
     <style>
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: #000; overflow: hidden; }
         :root { --plyr-color-main: #2196F3; }
         .plyr { height: 100vh; width: 100%; }
         video { height: 100vh !important; width: 100% !important; object-fit: contain; }
+
+        /* Colorful Loading Spinner */
+        .custom-loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 55px;
+            height: 55px;
+            border: 6px solid #000;
+            border-radius: 50%;
+            z-index: 99;
+            display: block;
+            animation: spin 1s linear infinite, colorChange 3s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        @keyframes colorChange {
+            0%, 100% { border-top-color: #ff0000; } /* Red */
+            33% { border-top-color: #00ff00; }      /* Green */
+            66% { border-top-color: #000000; }      /* Black */
+        }
+
+        /* Initial Hide Play Button */
+        .plyr__control--overlaid {
+            display: none !important;
+        }
+
+        /* Show Play Button when ready to start */
+        .ready-to-start .plyr__control--overlaid {
+            display: flex !important;
+        }
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <div id="main-loader" class="custom-loader"></div>
+
+    <div class="container" id="player-container">
         <video id="player" playsinline controls preload="auto">
             <source id="videoSource" type="video/mp4" />
         </video>
@@ -28,57 +66,53 @@
         const posterUrl = urlParams.get('img') || "https://img.mmporns.com/2627jan1.png";
 
         const videoElement = document.getElementById('player');
-        const sourceElement = document.getElementById('videoSource');
+        const loader = document.getElementById('main-loader');
+        const container = document.getElementById('player-container');
         
-        sourceElement.src = videoUrl;
+        document.getElementById('videoSource').src = videoUrl;
         videoElement.poster = posterUrl;
 
-        // Player Initial
         const player = new Plyr('#player', {
             controls: ['play-large', 'play', 'progress', 'current-time', 'duration', 'mute', 'volume', 'settings', 'fullscreen'],
             settings: ['speed'],
             speed: { selected: 1, options: [0.5, 1, 1.25, 1.5, 2] }
         });
 
-        // --- Speed & Buffering Optimization ---
-
-        player.on('ready', () => {
-     
-            videoElement.setAttribute('preload', 'auto');
-            videoElement.setAttribute('autobuffer', 'true');
-
-
-            const boostBuffer = () => {
-                if (videoElement.buffered.length > 0) {
-                    const bufferedEnd = videoElement.buffered.end(videoElement.buffered.length - 1);
-                    const duration = videoElement.duration;
-                    
-
-                    if (bufferedEnd < duration) {
-                        videoElement.play().then(() => {
-                    
-                            if (videoElement.paused === false && videoElement.currentTime < 0.1) {
-                                videoElement.pause();
-                            }
-                        }).catch(e => {});
-                    }
-                }
-            };
-
-      
-            videoElement.addEventListener('loadedmetadata', function() {
-                console.log("Metadata Loaded: Optimizing Buffer Speed...");
-                videoElement.preload = "auto";
-                boostBuffer();
-            });
-
-    
-            videoElement.addEventListener('progress', boostBuffer);
+        // ၁။ ဗီဒီယို စတင် Play လို့ရတာနဲ့ (Data အနည်းငယ်ရတာနဲ့) Play Button ပြမယ်
+        player.on('canplay', () => {
+            loader.style.display = 'none';
+            container.classList.add('ready-to-start');
         });
 
-    
+        // ၂။ Play နေရင်း buffer မမှီရင် Spinner ပြန်ပြမယ်
+        player.on('waiting', () => { loader.style.display = 'block'; });
+        player.on('playing', () => { loader.style.display = 'none'; });
+
+        // ၃။ Max Buffer Acceleration (Play နေရင်း အတင်းဆွဲခိုင်းခြင်း)
+        player.on('ready', () => {
+            videoElement.setAttribute('preload', 'auto');
+            
+            // Video အစမှာ Buffer ကို အရှိန်မြှင့်ဖို့ တစ်ချက်ဆွပေးခြင်း
+            videoElement.play().then(() => {
+                setTimeout(() => { 
+                    if (videoElement.currentTime < 0.5) {
+                        videoElement.pause(); 
+                        // Pause ထားပေမဲ့ Background ကနေ အဆက်မပြတ် ဆွဲနေဖို့ preload ကို reinforce လုပ်မယ်
+                        videoElement.preload = "auto";
+                    }
+                }, 150);
+            }).catch(e => {});
+        });
+
+        // ၄။ Continuous Background Loading
+        // Play နေစဉ်မှာ နောက်ကွယ်က Buffer ကို အမြဲတမ်း ၁၀၀% ရအောင် အတင်းဆွဲခိုင်းထားတဲ့ logic
+        videoElement.addEventListener('progress', () => {
+            if (videoElement.buffered.length > 0) {
+                videoElement.preload = "auto";
+            }
+        });
+
         player.on('error', () => {
-            console.log("Network lag detected. Re-connecting...");
             videoElement.load();
         });
 
