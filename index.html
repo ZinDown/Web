@@ -103,9 +103,9 @@
                         } else if (item.type === 'web') {
                             window.location.href = item.link; // Redirect to item link
                         } else if (item.type === 'iframe') {
-                            window.location.href = `https://zindown.github.io/Web/iframe.html?url=${encodeURIComponent(item.link)}`; // Redirect to videoplay.html
+                            window.location.href = `./iframe.html?url=${encodeURIComponent(item.link)}`; // Redirect to videoplay.html
                         } else {
-                            window.location.href = `https://zindown.github.io/Web/directplay.html?url=${encodeURIComponent(item.link)}&img=${encodeURIComponent(item.image)}`; // Redirect to videoplay.html
+                            window.location.href = `./directplay.html?url=${encodeURIComponent(item.link)}&img=${encodeURIComponent(item.image)}`; // Redirect to videoplay.html
                         }
                     });
                         gridView.appendChild(div);
@@ -113,7 +113,7 @@
                 })
                 .catch(error => {
                     console.error('Error fetching JSON:', error);
-                    document.body.innerHTML = '<p>Error fetching data. Please try again later.</p>';
+                    document.body.innerHTML = '<p>VPN ခံသုံးပေးပါ ချိဖ ယေ 😘 .</p>';
                 });
         }
     </script>
