@@ -149,13 +149,13 @@
                             gridView.appendChild(div);
                         });
                     } else {
-                         gridView.innerHTML = '<p style="text-align:center;">No data found in JSON</p>';
+                         gridView.innerHTML = '<p style="text-align:center;">No data found in Server.!!!</p>';
                     }
                 })
                 .catch(error => {
                     console.error('Error fetching JSON:', error);
-                 
-                    document.getElementById('gridView').innerHTML = '<p style="text-align:center; color:red;">Data ဆွဲမရပါ (VPN ဖွင့်ထားလား စစ်ဆေးပါ)</p>';
+                 document.querySelector('.container').innerHTML += '<p style="text-align:center; color:red;">Data ဆွဲမရပါ ( VPN ချိတ်သုံးပေးပါ ချိဖ )</p>';
+          
                 });
         }
     </script>
