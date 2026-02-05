@@ -2,118 +2,160 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>All Kar</title>
     <style>
         body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f4f4f4;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
 
-    .container {
-      flex: 1; /* Take up remaining space below header */
-      padding: 10px;
-      width: 100%;
-      max-width: 1200px;
-      box-sizing: border-box;
-      overflow-y: auto; /* Enable scrolling for content overflow */
-    }
+        
+        .container {
+            flex: 1;
+            width: 100%;
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 2px 10px 10px 10px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 10px;
-    }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+        }
 
-    .grid-item {
-      background-color: white;
-      padding: 10px;
-      border-radius: 8px;
-      text-align: center;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      cursor: pointer;
-    }
+        .grid-item {
+            background-color: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .grid-item:active {
+            transform: scale(0.98);
+        }
 
-    .grid-item img {
-      width: 100%;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 4px;
-    }
+        .grid-item img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
 
-    .grid-item p {
-      margin: 5px 0 0;
-      font-size: 14px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+        .grid-item p {
+            margin: 5px 0 0;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
-    /* Responsive Design for Android phones */
-    @media screen and (max-width: 600px) {
-      .grid {
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-        gap: 5px;
-      }
+        /* Responsive Design */
+        @media screen and (max-width: 600px) {
+            .grid {
+                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); /* ဖုန်းမှာ size နည်းနည်းညှိပေးထားပါတယ် */
+                gap: 8px;
+            }
 
-      .grid-item img {
-        height: 100px;
-      }
+            .grid-item img {
+                height: 100px;
+            }
+        }
 
-      .container {
-        padding: 5px;
-      }
-    }
+.vpn-warning {
+    text-align: center;
+    margin-top: 5px;   
+    margin-bottom: 10px;
+    color: #ff0000;
+    font-weight: bold;
+    font-size: 14px;   
+    background-color: #ffe6e6;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ffcccc;
+}
+.img-fallback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #e0e0e0 0%, #bdbdbd 100%);
+    color: #757575;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    height: 120px; 
+    border-radius: 4px;
+}
+
     </style>
 </head>
 <body>
-    <div class="container">
 
+    <div class="container">
+        <h3 class="vpn-warning">Video ဖွင့်မရရင် VPN ခံသုံးပေးပါ</h3>
+        
         <div id="gridView" class="grid"></div>
     </div>
 
     <script>
-        // Extract the link parameter from the URL
+        
         const params = new URLSearchParams(window.location.search);
         const link = params.get('link');
 
+        
         if (!link) {
-            document.body.innerHTML = '<p>Error: No link parameter provided!</p>';
+   
+             document.querySelector('.container').innerHTML += '<p style="text-align:center; color:red;">Error: No link parameter provided!</p>';
         } else {
-            // Fetch JSON data from the provided link and display grid view
+        
             fetch(link)
                 .then(response => response.json())
                 .then(data => {
                     const gridView = document.getElementById('gridView');
-                    data.apyar.forEach(item => {
-                        const div = document.createElement('div');
-                        div.className = 'grid-item';
-                        div.innerHTML = `
-                            <img src="${item.image}" alt="${item.title}">
-                            <p>${item.title}</p>
-                        `;
-                        div.addEventListener('click', () => {
-                        if (item.type === 'join') {
-                            window.location.href = item.link; // Redirect to item link
-                        } else if (item.type === 'web') {
-                            window.location.href = item.link; // Redirect to item link
-                        } else if (item.type === 'iframe') {
-                            window.location.href = `./iframe.html?url=${encodeURIComponent(item.link)}`; // Redirect to videoplay.html
-                        } else {
-                            window.location.href = `./directplay.html?url=${encodeURIComponent(item.link)}&img=${encodeURIComponent(item.image)}`; // Redirect to videoplay.html
-                        }
-                    });
-                        gridView.appendChild(div);
-                    });
+                    
+                    
+                    if(data.apyar){
+                        data.apyar.forEach(item => {
+                            const div = document.createElement('div');
+                            div.className = 'grid-item';
+                            div.innerHTML = `
+    <img src="${item.image}" alt="${item.title}" 
+         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+    <div class="img-fallback" style="display:none;">No Image</div>
+    <p>${item.title}</p>
+`;
+                            
+                            div.addEventListener('click', () => {
+                               if (item.type === 'direct') {
+                               	window.location.href = `./directplay.html?url=${encodeURIComponent(item.link)}&img=${encodeURIComponent(item.image)}`;
+                                    
+                                } else if (item.type === 'iframe') {
+                                    window.location.href = `./iframe.html?url=${encodeURIComponent(item.link)}`;
+                                } else {
+                                    window.location.href = item.link;
+                                }
+                            });
+                            gridView.appendChild(div);
+                        });
+                    } else {
+                         gridView.innerHTML = '<p style="text-align:center;">No data found in JSON</p>';
+                    }
                 })
                 .catch(error => {
                     console.error('Error fetching JSON:', error);
-                    document.body.innerHTML = '<p>VPN ခံသုံးပေးပါ ချိဖ ယေ 😘 .</p>';
+                 
+                    document.getElementById('gridView').innerHTML = '<p style="text-align:center; color:red;">Data ဆွဲမရပါ (VPN ဖွင့်ထားလား စစ်ဆေးပါ)</p>';
                 });
         }
     </script>
