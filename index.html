@@ -109,7 +109,14 @@
     </div>
 
     <script>
-        
+        window.addEventListener("load", () => {
+        const container = document.querySelector(".container");
+        const savedScroll = sessionStorage.getItem("gridScroll");
+        if (container && savedScroll) {
+            container.scrollTop = parseInt(savedScroll);
+        }
+    });
+    
         const params = new URLSearchParams(window.location.search);
         const link = params.get('link');
 
@@ -137,6 +144,12 @@
 `;
                             
                             div.addEventListener('click', () => {
+                            	
+                                const container = document.querySelector(".container");
+    if (container) {
+        sessionStorage.setItem("gridScroll", container.scrollTop);
+    }
+                            
                                if (item.type === 'direct') {
                                	window.location.href = `./directplay.html?url=${encodeURIComponent(item.link)}&img=${encodeURIComponent(item.image)}`;
                                     
