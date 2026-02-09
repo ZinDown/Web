@@ -110,13 +110,9 @@
 
     <script>
     	
-        window.addEventListener("load", () => {
-        const container = document.querySelector(".container");
-        const savedScroll = sessionStorage.getItem("gridScroll");
-        if (container && savedScroll) {
-            container.scrollTop = parseInt(savedScroll);
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
         }
-    });
     
         const params = new URLSearchParams(window.location.search);
         const link = params.get('link');
@@ -146,10 +142,7 @@
                             
                             div.addEventListener('click', () => {
                             	
-                                const container = document.querySelector(".container");
-                                if (container) {
-                                sessionStorage.setItem("gridScroll", container.scrollTop);
-                                   }
+                                localStorage.setItem('lastScrollPos', window.scrollY);
                             
                                if (item.type === 'direct') {
                                	window.location.href = `./directplay.html?url=${encodeURIComponent(item.link)}&img=${encodeURIComponent(item.image)}`;
@@ -162,6 +155,20 @@
                             });
                             gridView.appendChild(div);
                         });
+                        
+                                                const savedScroll = localStorage.getItem('lastScrollPos');
+                        if (savedScroll) {
+                  
+                            setTimeout(() => {
+                                window.scrollTo({
+                                    top: parseInt(savedScroll),
+                                    behavior: 'instant' 
+                                });
+                                
+                                localStorage.removeItem('lastScrollPos');
+                            }, 300); 
+                        }
+                        
                     } else {
                          gridView.innerHTML = '<p style="text-align:center;">No data found in Server.!!!</p>';
                     }
